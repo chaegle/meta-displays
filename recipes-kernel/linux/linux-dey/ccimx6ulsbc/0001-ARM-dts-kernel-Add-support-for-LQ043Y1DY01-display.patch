@@ -1,0 +1,578 @@
+From 742aa2162ad98328a1f2159926916ff4952697d2 Mon Sep 17 00:00:00 2001
+From: Cameron Haegle <cameronh@digi.com>
+Date: Wed, 5 Sep 2018 12:42:32 -0500
+Subject: [PATCH] ARM dts kernel Add support for LQ043Y1DY01 display
+
+---
+ arch/arm/boot/dts/imx6ul-ccimx6ulsbc-id135.dts |  17 +-
+ arch/arm/boot/dts/imx6ul-ccimx6ulsbc.dtsi      |  32 +-
+ drivers/video/fbdev/Kconfig                    |  11 +
+ drivers/video/fbdev/Makefile                   |   1 +
+ drivers/video/fbdev/lq043y1dy01.c              | 438 +++++++++++++++++++++++++
+ 5 files changed, 488 insertions(+), 11 deletions(-)
+ create mode 100644 drivers/video/fbdev/lq043y1dy01.c
+
+diff --git a/arch/arm/boot/dts/imx6ul-ccimx6ulsbc-id135.dts b/arch/arm/boot/dts/imx6ul-ccimx6ulsbc-id135.dts
+index 37c2d41..c94a1eb 100644
+--- a/arch/arm/boot/dts/imx6ul-ccimx6ulsbc-id135.dts
++++ b/arch/arm/boot/dts/imx6ul-ccimx6ulsbc-id135.dts
+@@ -52,15 +52,14 @@
+ &ecspi1 {
+ 	status = "okay";
+ 
+-	/*
+-	 * Add your slave devices here. Next is an example of spidev.
+-	 * Expect a harmless kernel warning if you enable spidev as slave.
+-	 */
+-	spidev@0 {
+-		reg = <0>;
+-		compatible = "spidev";
+-		spi-max-frequency = <1000000>;
+-	};
++        lq043y1dy01 {
++                reg = <0>;
++                compatible = "lq043y1dy01";
++                spi-max-frequency = <1000000>;
++                fb-name = "mxs-lcdif";
++                reset-gpios = <&gpio3 4 GPIO_ACTIVE_HIGH>;
++                skip-fb-mode-change;
++        };
+ };
+ 
+ /* ECSPI1 (as slave) */
+diff --git a/arch/arm/boot/dts/imx6ul-ccimx6ulsbc.dtsi b/arch/arm/boot/dts/imx6ul-ccimx6ulsbc.dtsi
+index 2737863..1c579b0 100644
+--- a/arch/arm/boot/dts/imx6ul-ccimx6ulsbc.dtsi
++++ b/arch/arm/boot/dts/imx6ul-ccimx6ulsbc.dtsi
+@@ -232,8 +232,10 @@
+ &lcdif {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_lcdif_dat0_17
++                     &pinctrl_lcdif_hvsync
++                     &pinctrl_lcdif_reset
+ 		     &pinctrl_lcdif_clken>;
+-	display = <&f07a0102>;
++	display = <&lq043y1dy01>;
+ 	status = "disabled";
+ 
+ 	f07a0102: display@0 {
+@@ -329,6 +331,31 @@
+ 			};
+ 		};
+ 	};
++
++        lq043y1dy01: display@4 {
++                bits-per-pixel = <16>;
++                bus-width = <18>;
++
++                display-timings {
++                        native-mode = <&timing4>;
++                        timing4: timing4 {
++                                clock-frequency = <24580000>;
++                                hactive = <480>;
++                                vactive = <800>;
++                                hfront-porch = <15>;
++                                hback-porch = <6>;
++                                hsync-len = <6>;
++                                vback-porch = <3>;
++                                vfront-porch = <3>;
++                                vsync-len = <3>;
++                                hsync-active = <0>;
++                                vsync-active = <0>;
++                                de-active = <1>;
++                                pixelclk-active = <0>;
++                        };
++                };
++        };
++
+ };
+ 
+ /* Powers BU90T82 LVDS bridge at 1.8V */
+@@ -597,7 +624,8 @@
+ 
+ 		pinctrl_lcdif_reset: lcdifctrlgrp3 {
+ 			fsl,pins = <
+-				MX6UL_PAD_LCD_RESET__LCDIF_RESET	0x79
++				//MX6UL_PAD_LCD_RESET__LCDIF_RESET	0x79
++                                MX6UL_PAD_LCD_RESET__GPIO3_IO04         0xf030
+ 			>;
+ 		};
+ 
+diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
+index 1e34792f..1b2cca0 100644
+--- a/drivers/video/fbdev/Kconfig
++++ b/drivers/video/fbdev/Kconfig
+@@ -2507,3 +2507,14 @@ config FB_RPISENSE
+ 
+ 	help
+ 	  This is the framebuffer driver for the Raspberry Pi Sense HAT
++
++config FB_LQ043Y1DY01
++        tristate "LQ043Y1DY01 driver"
++        depends on FB
++
++        help
++          This is the driver for the LQ043Y1DY01 display.
++          Note that this driver just performs the display initialization and the
++          video configuration. It must be used in parallel with a driver that
++          handles the parallel RGB interface.
++
+diff --git a/drivers/video/fbdev/Makefile b/drivers/video/fbdev/Makefile
+index bcd656d..12c724e 100644
+--- a/drivers/video/fbdev/Makefile
++++ b/drivers/video/fbdev/Makefile
+@@ -148,6 +148,7 @@ obj-$(CONFIG_FB_MXS)		  += mxsfb.o
+ obj-$(CONFIG_FB_SSD1307)	  += ssd1307fb.o
+ obj-$(CONFIG_FB_SIMPLE)           += simplefb.o
+ obj-$(CONFIG_FB_RPISENSE)	  += rpisense-fb.o
++obj-$(CONFIG_FB_LQ043Y1DY01)      += lq043y1dy01.o
+ 
+ # the test framebuffer is last
+ obj-$(CONFIG_FB_VIRTUAL)          += vfb.o
+diff --git a/drivers/video/fbdev/lq043y1dy01.c b/drivers/video/fbdev/lq043y1dy01.c
+new file mode 100644
+index 0000000..7fd40b9
+--- /dev/null
++++ b/drivers/video/fbdev/lq043y1dy01.c
+@@ -0,0 +1,438 @@
++/*
++ *  Copyright 2017 Digi International Inc
++ *
++ *  This program is free software; you can redistribute  it and/or modify it
++ *  under  the terms of  the GNU General  Public License as published by the
++ *  Free Software Foundation;  either version 2 of the  License, or (at your
++ *  option) any later version.
++ *
++ *  @file lq043y1dy01.c
++ *
++ *  @brief  Driver for the LQ043Y1DY01 display.
++ *
++ *  @ingroup Framebuffer
++ */
++
++/*!
++ * Include files
++ */
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/console.h>
++#include <linux/delay.h>
++#include <linux/errno.h>
++#include <linux/fb.h>
++#include <linux/init.h>
++#include <linux/platform_device.h>
++#include <linux/spi/spi.h>
++#include <linux/gpio/consumer.h>
++#include <video/of_display_timing.h>
++#include <video/videomode.h>
++
++#define DRV_NAME		"lq043y1dy01"
++#define GPIO_RST_NAME		"reset"
++
++#define CMD_ENTER_SLEEP_MODE	0x10
++#define CMD_EXIT_SLEEP_MODE	0x11
++#define CMD_SET_DISPLAY_OFF	0x28
++#define CMD_SET_DISPLAY_ON	0x29
++#define CMD_SET_PIXEL_FORMAT	0x3a
++#define CMD_SET_EXTENSION_CMD	0xb9
++
++
++struct lq043y1dy01_dev {
++	struct spi_device	*spi;
++	struct gpio_desc	*gpiod_rst;
++	struct fb_info		*fbi;
++	char			fb_id[16];
++	bool			reinit_on_resume;
++	struct notifier_block	nb;
++};
++
++static struct fb_info *lq043y1dy01_find_fb(const char *fb_id)
++{
++	static struct fb_info *fbi;
++	int i;
++
++	for (i = 0; i < num_registered_fb; i++) {
++		fbi = registered_fb[i];
++		if (fbi && strcmp(fbi->fix.id, fb_id) == 0)
++			return fbi;
++	}
++
++	return NULL;
++}
++
++
++static int lq043y1dy01_spi_write_then_read(struct lq043y1dy01_dev *disp,
++					   u8 *txbuf, u16 txlen,
++					   u8 *rxbuf, u16 rxlen)
++{
++	struct spi_message msg;
++	struct spi_transfer xfer[2];
++	u16 *local_txbuf = NULL;
++	int ret = 0;
++
++	memset(xfer, 0, sizeof(xfer));
++	spi_message_init(&msg);
++
++	if (txlen) {
++		int i;
++
++		local_txbuf = kcalloc(txlen, sizeof(*local_txbuf), GFP_KERNEL);
++
++		if (!local_txbuf)
++			return -ENOMEM;
++
++		for (i = 0; i < txlen; i++) {
++			local_txbuf[i] = txbuf[i];
++			if (i > 0)
++				local_txbuf[i] |= 1 << 8;
++		}
++
++		xfer[0].len = 2 * txlen;
++		xfer[0].bits_per_word = 9;
++		xfer[0].tx_buf = local_txbuf;
++		spi_message_add_tail(&xfer[0], &msg);
++	}
++
++	if (rxlen) {
++		xfer[1].len = rxlen;
++		xfer[1].bits_per_word = 8;
++		xfer[1].rx_buf = rxbuf;
++		spi_message_add_tail(&xfer[1], &msg);
++	}
++
++	ret = spi_sync(disp->spi, &msg);
++	if (ret < 0)
++		dev_err(&disp->spi->dev, "Couldn't send SPI data\n");
++
++	if (txlen)
++		kfree(local_txbuf);
++
++	return ret;
++}
++
++static inline int lq043y1dy01_spi_write_array(struct lq043y1dy01_dev *disp,
++					u8 *value, u8 len)
++{
++	return lq043y1dy01_spi_write_then_read(disp, value, len, NULL, 0);
++}
++
++static inline int lq043y1dy01_spi_write_byte(struct lq043y1dy01_dev *disp,
++					u8 value)
++{
++	return lq043y1dy01_spi_write_then_read(disp, &value, 1, NULL, 0);
++}
++
++static int lq043y1dy01_detect(struct lq043y1dy01_dev *ilidev)
++{
++	/* Not implemented */
++	return 0;
++}
++
++static int lq043y1dy01_lcd_init(struct lq043y1dy01_dev *disp)
++{
++	u8 seq_extension_cmd[] = {CMD_SET_EXTENSION_CMD, 0xff, 0x83, 0x63};
++	u8 seq_set_mode[] = {CMD_SET_PIXEL_FORMAT, 0x70};
++	int ret;
++
++	ret = lq043y1dy01_spi_write_byte(disp, CMD_EXIT_SLEEP_MODE);
++	if (ret < 0) {
++		dev_warn(&disp->spi->dev, "failed to exit sleep mode (%d)\n",
++			 ret);
++		return ret;
++	}
++
++	/*
++	 * The controller needs 120ms when exiting from sleep mode before we
++	 * can send the command to enter in sleep mode
++	 */
++	msleep(120);
++
++	ret = lq043y1dy01_spi_write_array(disp, seq_extension_cmd,
++					  ARRAY_SIZE(seq_extension_cmd));
++	if (ret < 0) {
++		dev_warn(&disp->spi->dev,
++			 "failed to set extension cmd (%d)\n", ret);
++		return ret;
++	}
++	usleep_range(10000, 12000);
++
++	ret = lq043y1dy01_spi_write_array(disp, seq_set_mode,
++					  ARRAY_SIZE(seq_set_mode));
++	if (ret < 0) {
++		dev_warn(&disp->spi->dev, "failed to set pixel fmt (%d)\n", ret);
++		return ret;
++	}
++	usleep_range(10000, 12000);
++
++	ret = lq043y1dy01_spi_write_byte(disp, CMD_SET_DISPLAY_ON);
++	if (ret < 0) {
++		dev_warn(&disp->spi->dev, "failed to set display on (%d)\n",
++			 ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int lq043y1dy01_parse_dt(struct lq043y1dy01_dev *ilidev)
++{
++	struct gpio_desc *gpiod;
++	struct device *dev = &ilidev->spi->dev;
++	struct device_node *np = dev->of_node;
++	const char *names;
++	int ret = 0;
++
++	ret = of_property_read_string(np, "fb-name", &names);
++	if (ret) {
++		dev_err(dev, "failed to get fb video driver name\n");
++		return -ENOENT;
++	}
++
++	strncpy(ilidev->fb_id, names, sizeof(ilidev->fb_id));
++
++	ilidev->fbi = lq043y1dy01_find_fb(ilidev->fb_id);
++	if (!ilidev->fbi) {
++		dev_err(dev, "failed to find fb %s\n", ilidev->fb_id);
++		return -ENODEV;
++	}
++
++	/* Get the reset line GPIO pin number */
++	gpiod = devm_gpiod_get_optional(dev, GPIO_RST_NAME, GPIOD_IN);
++	if (IS_ERR(gpiod)) {
++		ret = PTR_ERR(gpiod);
++		if (ret != -EPROBE_DEFER)
++			dev_dbg(dev, "failed to get %s GPIO (%d)\n",
++				GPIO_RST_NAME, ret);
++		return ret;
++	}
++
++	ilidev->gpiod_rst = gpiod;
++
++	ilidev->reinit_on_resume = of_property_read_bool(np,
++							 "reinit-on-resume");
++
++	return 0;
++}
++
++static int lq043y1dy01_reset(struct lq043y1dy01_dev *ilidev)
++{
++	int ret;
++
++	if (!ilidev->gpiod_rst)
++		return 0;	/* GPIO not provided, its optional */
++
++	ret = gpiod_direction_output(ilidev->gpiod_rst, 0);
++	if (ret)
++		return ret;
++
++	udelay(25);	/* DS says 10 us */
++
++	ret = gpiod_direction_output(ilidev->gpiod_rst, 1);
++	if (ret)
++		return ret;
++
++	msleep(10);	/* Wait before sending commands to the display */
++
++	return 0;
++}
++
++static int lq043y1dy01_init(struct lq043y1dy01_dev *ilidev)
++{
++	struct device *dev = &ilidev->spi->dev;
++	int ret;
++
++	ret = lq043y1dy01_reset(ilidev);
++	if (ret)
++		dev_warn(dev, "unable to reset display\n");
++
++	ret = lq043y1dy01_detect(ilidev);
++	if (ret) {
++		dev_err(dev, "unable to detect LQ043Y1DY01 controller\n");
++		return ret;
++	}
++
++	ret = lq043y1dy01_lcd_init(ilidev);
++	if (ret)
++		dev_err(dev, "unable to initialize lcd display\n");
++
++	return ret;
++}
++
++static int lq043y1dy01_fb_event(struct notifier_block *nb, unsigned long val,
++			     void *v)
++{
++	struct lq043y1dy01_dev *disp = container_of(nb, struct lq043y1dy01_dev, nb);
++	struct fb_event *event = v;
++
++	/* If not our framebuffer, skip it immediately */
++	if (event->info != disp->fbi)
++		return 0;
++
++	switch (val) {
++	case FB_EVENT_FB_REGISTERED:
++		fb_show_logo(disp->fbi, 0);
++		break;
++
++	case FB_EVENT_FB_UNREGISTERED:
++		lq043y1dy01_spi_write_byte(disp, CMD_SET_DISPLAY_OFF);
++		break;
++
++	case FB_EVENT_MODE_CHANGE:
++		break;
++
++	case FB_EVENT_BLANK:
++		if (*((int *)event->data) == FB_BLANK_UNBLANK) {
++			dev_dbg(&disp->spi->dev, "FB_BLANK_UNBLANK\n");
++			lq043y1dy01_spi_write_byte(disp, CMD_SET_DISPLAY_ON);
++		} else {
++			dev_dbg(&disp->spi->dev, "FB_BLANK_BLANK\n");
++			lq043y1dy01_spi_write_byte(disp, CMD_SET_DISPLAY_OFF);
++		}
++		break;
++
++	default:
++		break;
++	}
++	return 0;
++}
++
++static int lq043y1dy01_probe(struct spi_device *spi)
++{
++	struct lq043y1dy01_dev *disp;
++	int ret;
++
++	dev_dbg(&spi->dev, "%s\n", __func__);
++
++	disp = kzalloc(sizeof(*disp), GFP_KERNEL);
++	if (!disp) {
++		dev_err(&spi->dev, "failed to allocate memory\n");
++		return -ENOMEM;
++	}
++
++	disp->spi = spi;
++
++	spi->mode = SPI_MODE_0;
++	spi->bits_per_word = 9;
++	spi_setup(spi);
++
++	dev_set_drvdata(&spi->dev, disp);
++
++	ret = lq043y1dy01_parse_dt(disp);
++	if (ret) {
++		dev_err(&spi->dev, "unable to read DT properties\n");
++		goto error_alloc;
++	}
++
++	ret = lq043y1dy01_init(disp);
++	if (ret)
++		goto error_alloc;
++
++	disp->nb.notifier_call = lq043y1dy01_fb_event;
++	ret = fb_register_client(&disp->nb);
++	if (ret)
++		dev_warn(&spi->dev,
++			 "error registering lq043y1dy01_fb_event notifier\n");
++
++	dev_info(&spi->dev, "LQ043Y1DY01 driver loaded\n");
++
++	return 0;
++
++error_alloc:
++	kfree(disp);
++
++	return ret;
++}
++
++static int lq043y1dy01_remove(struct spi_device *spi)
++{
++	struct lq043y1dy01_dev *disp = dev_get_drvdata(&spi->dev);
++
++	/* Power off and free resources */
++	lq043y1dy01_spi_write_byte(disp, CMD_SET_DISPLAY_OFF);
++	fb_unregister_client(&disp->nb);
++
++	kfree(disp);
++
++	return 0;
++}
++
++#ifdef CONFIG_PM_SLEEP
++static int __maybe_unused lq043y1dy01_suspend(struct device *dev)
++{
++	struct spi_device *spi = to_spi_device(dev);
++	struct lq043y1dy01_dev *disp = dev_get_drvdata(&spi->dev);
++	int ret;
++
++	ret = lq043y1dy01_spi_write_byte(disp, CMD_SET_DISPLAY_OFF);
++	if (ret < 0)
++		return ret;
++
++	usleep_range(10000, 12000);
++
++	ret = lq043y1dy01_spi_write_byte(disp, CMD_ENTER_SLEEP_MODE);
++	if (ret < 0)
++		return ret;
++
++	/*
++	 * The controller needs 120ms when entering in sleep mode before we can
++	 * send the command to go off sleep mode
++	 */
++	msleep(120);
++
++	return 0;
++}
++
++static int __maybe_unused lq043y1dy01_resume(struct device *dev)
++{
++	struct spi_device *spi = to_spi_device(dev);
++	struct lq043y1dy01_dev *disp = dev_get_drvdata(&spi->dev);
++	int ret;
++
++	if (disp->reinit_on_resume)
++		return lq043y1dy01_init(disp);
++
++	ret = lq043y1dy01_spi_write_byte(disp, CMD_EXIT_SLEEP_MODE);
++	if (ret < 0) {
++		dev_err(&disp->spi->dev, "unable to exit sleep mode (%d)\n", ret);
++		return ret;
++	}
++
++	/*
++	 * The controller needs 120ms when exiting from sleep mode before we
++	 * can send the command to enter in sleep mode
++	 */
++	msleep(120);
++
++	return lq043y1dy01_spi_write_byte(disp, CMD_SET_DISPLAY_ON);
++}
++
++static SIMPLE_DEV_PM_OPS(lq043y1dy01_pm_ops, lq043y1dy01_suspend, lq043y1dy01_resume);
++#endif /* CONFIG_PM_SLEEP */
++
++static const struct of_device_id lq043y1dy01_dt_ids[] = {
++	{ .compatible = "lq043y1dy01", },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, lq043y1dy01_dt_ids);
++
++static struct spi_driver lq043y1dy01_driver = {
++	.driver = {
++		.name		= DRV_NAME,
++		.owner		= THIS_MODULE,
++		.of_match_table	= lq043y1dy01_dt_ids,
++#ifdef CONFIG_PM_SLEEP
++		.pm		= &lq043y1dy01_pm_ops,
++#endif
++	},
++	.probe		= lq043y1dy01_probe,
++	.remove		= lq043y1dy01_remove,
++};
++
++module_spi_driver(lq043y1dy01_driver);
++
++MODULE_AUTHOR("Digi International Inc.");
++MODULE_DESCRIPTION("LQ043Y1DY01 driver");
++MODULE_LICENSE("GPL");
+-- 
+2.7.4
+
