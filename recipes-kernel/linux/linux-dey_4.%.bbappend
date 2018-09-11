@@ -1,6 +1,11 @@
+
+
 FILESEXTRAPATHS_prepend := "${THISDIR}/${BPN}:"
 
-SRC_URI += "file://0001-ARM-dts-kernel-Add-support-for-LQ043Y1DY01-display.patch"
+SRC_URI_append_ccimx6ulsbc = "\
+    ${@base_conditional('DISP_ADD_LQ043', '1', 'file://0001-ARM-dts-kernel-ccimx6ulsbc-Add-LQ043Y1DY01-LCD-suppo.patch' , '', d)} \
+"
+
 
 #
 # Enable LQ043 kernel driver
@@ -12,7 +17,9 @@ lq043_kernel_preconfigure() {
 }
 
 do_configure_prepend() {
-
-        lq043_kernel_preconfigure
+        
+        if [ "${DISP_ADD_LQ043}" = "1" ]; then
+               lq043_kernel_preconfigure
+        fi
 }
 

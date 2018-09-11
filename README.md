@@ -20,7 +20,7 @@ Supported Platforms
 
 Installation
 ------------
-1. Install Digi Embedded Yocto distribution (dey-2.2-r3)
+1. Install Digi Embedded Yocto distribution (dey-2.4-r1)
 
     https://github.com/digi-embedded/dey-manifest#installing-digi-embedded-yocto
 
@@ -28,7 +28,7 @@ Installation
    directory
 
         #> cd <DEY-INSTALLDIR>/sources
-        #> git clone https://github.com/chaegle/meta-displays.git -b morty
+        #> git clone https://github.com/chaegle/meta-displays.git -b rocko
 
 Create and build a project
 --------------------------

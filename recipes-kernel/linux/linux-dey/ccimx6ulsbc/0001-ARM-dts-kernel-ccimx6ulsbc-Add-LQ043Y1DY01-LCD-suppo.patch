@@ -1,34 +1,36 @@
-From 742aa2162ad98328a1f2159926916ff4952697d2 Mon Sep 17 00:00:00 2001
+From b302120b184523e70469d07148598d9fae837e27 Mon Sep 17 00:00:00 2001
 From: Cameron Haegle <cameronh@digi.com>
-Date: Wed, 5 Sep 2018 12:42:32 -0500
-Subject: [PATCH] ARM dts kernel Add support for LQ043Y1DY01 display
+Date: Fri, 7 Sep 2018 13:51:03 -0500
+Subject: [PATCH] ARM dts kernel ccimx6ulsbc Add LQ043Y1DY01 LCD support
 
 ---
- arch/arm/boot/dts/imx6ul-ccimx6ulsbc-id135.dts |  17 +-
- arch/arm/boot/dts/imx6ul-ccimx6ulsbc.dtsi      |  32 +-
- drivers/video/fbdev/Kconfig                    |  11 +
+ arch/arm/boot/dts/imx6ul-ccimx6ulsbc-id135.dts |  19 +-
+ arch/arm/boot/dts/imx6ul-ccimx6ulsbc.dtsi      |  31 +-
+ drivers/video/fbdev/Kconfig                    |  10 +
  drivers/video/fbdev/Makefile                   |   1 +
  drivers/video/fbdev/lq043y1dy01.c              | 438 +++++++++++++++++++++++++
- 5 files changed, 488 insertions(+), 11 deletions(-)
+ 5 files changed, 492 insertions(+), 7 deletions(-)
  create mode 100644 drivers/video/fbdev/lq043y1dy01.c
 
 diff --git a/arch/arm/boot/dts/imx6ul-ccimx6ulsbc-id135.dts b/arch/arm/boot/dts/imx6ul-ccimx6ulsbc-id135.dts
-index 37c2d41..c94a1eb 100644
+index c7a7ee84..2d60d38 100644
 --- a/arch/arm/boot/dts/imx6ul-ccimx6ulsbc-id135.dts
 +++ b/arch/arm/boot/dts/imx6ul-ccimx6ulsbc-id135.dts
-@@ -52,15 +52,14 @@
- &ecspi1 {
- 	status = "okay";
- 
--	/*
--	 * Add your slave devices here. Next is an example of spidev.
--	 * Expect a harmless kernel warning if you enable spidev as slave.
--	 */
+@@ -56,11 +56,20 @@
+ 	 * Add your slave devices here. Next is an example of spidev.
+ 	 * Expect a harmless kernel warning if you enable spidev as slave.
+ 	 */
 -	spidev@0 {
 -		reg = <0>;
 -		compatible = "spidev";
 -		spi-max-frequency = <1000000>;
 -	};
++	//spidev@0 {
++	//	reg = <0>;
++	//	compatible = "spidev";
++	//	spi-max-frequency = <1000000>;
++	//};
++
 +        lq043y1dy01 {
 +                reg = <0>;
 +                compatible = "lq043y1dy01";
@@ -39,24 +41,24 @@ index 37c2d41..c94a1eb 100644
 +        };
  };
  
- /* ECSPI1 (as slave) */
+ /* ENET1 */
 diff --git a/arch/arm/boot/dts/imx6ul-ccimx6ulsbc.dtsi b/arch/arm/boot/dts/imx6ul-ccimx6ulsbc.dtsi
-index 2737863..1c579b0 100644
+index cef5088..356d4fc 100644
 --- a/arch/arm/boot/dts/imx6ul-ccimx6ulsbc.dtsi
 +++ b/arch/arm/boot/dts/imx6ul-ccimx6ulsbc.dtsi
-@@ -232,8 +232,10 @@
- &lcdif {
+@@ -255,9 +255,10 @@
  	pinctrl-names = "default";
  	pinctrl-0 = <&pinctrl_lcdif_dat0_17
-+                     &pinctrl_lcdif_hvsync
+ 		     &pinctrl_lcdif_clken
 +                     &pinctrl_lcdif_reset
- 		     &pinctrl_lcdif_clken>;
--	display = <&f07a0102>;
+ 		     &pinctrl_lcdif_hvsync>;
+ 	lcd-supply = <&ldo4_ext>;       /* BU90T82 LVDS bridge power */
+-	display = <&g101evn010>;
 +	display = <&lq043y1dy01>;
  	status = "disabled";
  
  	f07a0102: display@0 {
-@@ -329,6 +331,31 @@
+@@ -329,6 +330,31 @@
  			};
  		};
  	};
@@ -88,7 +90,7 @@ index 2737863..1c579b0 100644
  };
  
  /* Powers BU90T82 LVDS bridge at 1.8V */
-@@ -597,7 +624,8 @@
+@@ -597,7 +623,8 @@
  
  		pinctrl_lcdif_reset: lcdifctrlgrp3 {
  			fsl,pins = <
@@ -99,10 +101,10 @@ index 2737863..1c579b0 100644
  		};
  
 diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
-index 1e34792f..1b2cca0 100644
+index 1e34792f..c3d419f 100644
 --- a/drivers/video/fbdev/Kconfig
 +++ b/drivers/video/fbdev/Kconfig
-@@ -2507,3 +2507,14 @@ config FB_RPISENSE
+@@ -2507,3 +2507,13 @@ config FB_RPISENSE
  
  	help
  	  This is the framebuffer driver for the Raspberry Pi Sense HAT
@@ -116,16 +118,15 @@ index 1e34792f..1b2cca0 100644
 +          Note that this driver just performs the display initialization and the
 +          video configuration. It must be used in parallel with a driver that
 +          handles the parallel RGB interface.
-+
 diff --git a/drivers/video/fbdev/Makefile b/drivers/video/fbdev/Makefile
-index bcd656d..12c724e 100644
+index bcd656d..078a94d 100644
 --- a/drivers/video/fbdev/Makefile
 +++ b/drivers/video/fbdev/Makefile
 @@ -148,6 +148,7 @@ obj-$(CONFIG_FB_MXS)		  += mxsfb.o
  obj-$(CONFIG_FB_SSD1307)	  += ssd1307fb.o
  obj-$(CONFIG_FB_SIMPLE)           += simplefb.o
  obj-$(CONFIG_FB_RPISENSE)	  += rpisense-fb.o
-+obj-$(CONFIG_FB_LQ043Y1DY01)      += lq043y1dy01.o
++obj-$(CONFIG_FB_LQ043Y1DY01)	  += lq043y1dy01.o
  
  # the test framebuffer is last
  obj-$(CONFIG_FB_VIRTUAL)          += vfb.o
