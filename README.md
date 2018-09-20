@@ -12,11 +12,14 @@ Supported Displays
 ------------------
   
   * Sharp LQ043Y1DY01 4.3" 
+  * Digi 10" LCD Application kit (P/N: CC-ACC-LCDW-10)
 
 Supported Platforms
 -------------------
 
   * Digi ConnectCore 6UL SBC Pro 
+  * Digi connectCore 6 SBC (Quad and Dual)
+  * Digi ConnectCore 6 Quad Plus SBC
 
 Installation
 ------------
@@ -30,6 +33,15 @@ Installation
         #> cd <DEY-INSTALLDIR>/sources
         #> git clone https://github.com/chaegle/meta-displays.git -b rocko
 
+Hardware modification
+---------------------
+
+The LCD controller on the Sharp LQ043Y1DY01 display requires initial configuration via SPI. 
+By default the SPI (ecspi1) interface is not connected to the Parallel LCD connector
+(J21). Four pairs of resistor pads must be shorted in order to establish this 
+connection. Refer to the image ccimx6ulsbc_layout_spi.png for details as to the location
+of these pads. 
+  
 Create and build a project
 --------------------------
 
@@ -51,6 +63,21 @@ Create and build a project
         #> bitbake-layers add-layer <DEY-INSTALLDIR>/sources/meta-displays 
 
 3. Configure the project.
+     
+        Add the following line(s) to your project's local.conf.
+        
+        *Sharp LQ043 on ccimx6ulsbc*
+
+        DISP_LQ043 = "1"
+
+        *Fusion 10" on ccimx6sbc and ccimx6qpsbc*
+ 
+        # Enable Digi LCD Application kit support
+        DISP_FUSION = "1"
+        # Uncomment one of the below lines to enable touch
+        # for the appropriate I2C address
+        DISP_FUSION_ADDR_10 = "1"
+        #DISP_FUSION_ADDR_14 = "1"
 
 4. Build the images
 

@@ -1,0 +1,98 @@
+From 079ce27500396c5d57b1ade52ffa381b563be3cc Mon Sep 17 00:00:00 2001
+From: Cameron Haegle <cameronh@digi.com>
+Date: Wed, 19 Sep 2018 11:47:38 -0500
+Subject: [PATCH 2/2] ARM dts ccimx6qpsbc Enable fusion touch on addr 10
+
+---
+ arch/arm/boot/dts/imx6qp-ccimx6qpsbc-id160.dts | 12 ++++++------
+ arch/arm/boot/dts/imx6qp-ccimx6qpsbc-wb.dts    | 12 ++++++------
+ arch/arm/boot/dts/imx6qp-ccimx6qpsbc.dts       | 12 ++++++------
+ 3 files changed, 18 insertions(+), 18 deletions(-)
+
+diff --git a/arch/arm/boot/dts/imx6qp-ccimx6qpsbc-id160.dts b/arch/arm/boot/dts/imx6qp-ccimx6qpsbc-id160.dts
+index eee1b81..08887da 100644
+--- a/arch/arm/boot/dts/imx6qp-ccimx6qpsbc-id160.dts
++++ b/arch/arm/boot/dts/imx6qp-ccimx6qpsbc-id160.dts
+@@ -89,17 +89,17 @@
+ 	 * to avoid this error message.
+ 	 */
+ 	/* Uncomment to enable the fusion touch, used with hsd101pfw2 */
+-	//fusion@10 {
+-	//	status = "okay";
+-	//};
++	fusion@10 {
++		status = "okay";
++	};
+ 
+ 	//fusion@14 {
+ 	//	status = "okay";
+ 	//};
+ 
+-	goodix_touch: gt911@14 {
+-		status = "okay";
+-	};
++	//goodix_touch: gt911@14 {
++	//	status = "okay";
++	//};
+ 
+ 	/* MIPI-CSI2 camera */
+ 	ov5640_mipi: ov5640_mipi@4c {
+diff --git a/arch/arm/boot/dts/imx6qp-ccimx6qpsbc-wb.dts b/arch/arm/boot/dts/imx6qp-ccimx6qpsbc-wb.dts
+index eee1b81..9a3dc35 100644
+--- a/arch/arm/boot/dts/imx6qp-ccimx6qpsbc-wb.dts
++++ b/arch/arm/boot/dts/imx6qp-ccimx6qpsbc-wb.dts
+@@ -89,17 +89,17 @@
+ 	 * to avoid this error message.
+ 	 */
+ 	/* Uncomment to enable the fusion touch, used with hsd101pfw2 */
+-	//fusion@10 {
+-	//	status = "okay";
+-	//};
++	fusion@10 {
++		status = "okay";
++	};
+ 
+ 	//fusion@14 {
+ 	//	status = "okay";
+ 	//};
+ 
+-	goodix_touch: gt911@14 {
+-		status = "okay";
+-	};
++	//goodix_touch: gt911@14 {
++        //	status = "okay";
++	//};
+ 
+ 	/* MIPI-CSI2 camera */
+ 	ov5640_mipi: ov5640_mipi@4c {
+diff --git a/arch/arm/boot/dts/imx6qp-ccimx6qpsbc.dts b/arch/arm/boot/dts/imx6qp-ccimx6qpsbc.dts
+index 8a0551b..0ff2d4b 100644
+--- a/arch/arm/boot/dts/imx6qp-ccimx6qpsbc.dts
++++ b/arch/arm/boot/dts/imx6qp-ccimx6qpsbc.dts
+@@ -89,17 +89,17 @@
+ 	 * to avoid this error message.
+ 	 */
+ 	/* Uncomment to enable the fusion touch, used with hsd101pfw2 */
+-	//fusion@10 {
+-	//	status = "okay";
+-	//};
++	fusion@10 {
++		status = "okay";
++	};
+ 
+ 	//fusion@14 {
+ 	//	status = "okay";
+ 	//};
+ 
+-	goodix_touch: gt911@14 {
+-		status = "okay";
+-	};
++	//goodix_touch: gt911@14 {
++	//	status = "okay";
++	//};
+ 
+ 	/* MIPI-CSI2 camera */
+ 	ov5640_mipi: ov5640_mipi@4c {
+-- 
+2.7.4
+

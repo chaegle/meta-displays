@@ -1,0 +1,272 @@
+From 5f3d43ba1b17840a0b568e973b7ca075d1ef02ce Mon Sep 17 00:00:00 2001
+From: Cameron Haegle <cameronh@digi.com>
+Date: Thu, 20 Sep 2018 10:51:12 -0500
+Subject: [PATCH 2/2] ARM dts ccimx6sbc Enable fusion touch on addr 10
+
+---
+ arch/arm/boot/dts/imx6dl-ccimx6sbc-w.dts            | 12 ++++++------
+ arch/arm/boot/dts/imx6dl-ccimx6sbc-wb.dts           | 12 ++++++------
+ arch/arm/boot/dts/imx6dl-ccimx6sbc.dts              | 12 ++++++------
+ arch/arm/boot/dts/imx6q-ccimx6sbc-id129.dts         | 12 ++++++------
+ arch/arm/boot/dts/imx6q-ccimx6sbc-id130.dts         | 12 ++++++------
+ arch/arm/boot/dts/imx6q-ccimx6sbc-w.dts             | 12 ++++++------
+ arch/arm/boot/dts/imx6q-ccimx6sbc-wb-ldo-bypass.dts | 12 ++++++------
+ arch/arm/boot/dts/imx6q-ccimx6sbc-wb.dts            | 12 ++++++------
+ arch/arm/boot/dts/imx6q-ccimx6sbc.dts               | 12 ++++++------
+ 9 files changed, 54 insertions(+), 54 deletions(-)
+
+diff --git a/arch/arm/boot/dts/imx6dl-ccimx6sbc-w.dts b/arch/arm/boot/dts/imx6dl-ccimx6sbc-w.dts
+index 1d47a9b..2e6737c 100644
+--- a/arch/arm/boot/dts/imx6dl-ccimx6sbc-w.dts
++++ b/arch/arm/boot/dts/imx6dl-ccimx6sbc-w.dts
+@@ -105,17 +105,17 @@
+ 	 * to avoid this error message.
+ 	 */
+ 	/* Uncomment to enable the fusion touch, used with hsd101pfw2 */
+-	//fusion@10 {
+-	//	status = "okay";
+-	//};
++	fusion@10 {
++		status = "okay";
++	};
+ 
+ 	//fusion@14 {
+ 	//	status = "okay";
+ 	//};
+ 
+-	goodix_touch: gt911@14 {
+-		status = "okay";
+-	};
++	//goodix_touch: gt911@14 {
++	//	status = "okay";
++	//};
+ 
+ 	edid@50 {
+ 		status = "okay";
+diff --git a/arch/arm/boot/dts/imx6dl-ccimx6sbc-wb.dts b/arch/arm/boot/dts/imx6dl-ccimx6sbc-wb.dts
+index 7804a4f..8d6ba7b 100644
+--- a/arch/arm/boot/dts/imx6dl-ccimx6sbc-wb.dts
++++ b/arch/arm/boot/dts/imx6dl-ccimx6sbc-wb.dts
+@@ -105,17 +105,17 @@
+ 	 * to avoid this error message.
+ 	 */
+ 	/* Uncomment to enable the fusion touch, used with hsd101pfw2 */
+-	//fusion@10 {
+-	//	status = "okay";
+-	//};
++	fusion@10 {
++		status = "okay";
++	};
+ 
+ 	//fusion@14 {
+ 	//	status = "okay";
+ 	//};
+ 
+-	goodix_touch: gt911@14 {
+-		status = "okay";
+-	};
++	//goodix_touch: gt911@14 {
++	//	status = "okay";
++	//};
+ 
+ 	edid@50 {
+ 		status = "okay";
+diff --git a/arch/arm/boot/dts/imx6dl-ccimx6sbc.dts b/arch/arm/boot/dts/imx6dl-ccimx6sbc.dts
+index 892dbb3..ffb62ce 100644
+--- a/arch/arm/boot/dts/imx6dl-ccimx6sbc.dts
++++ b/arch/arm/boot/dts/imx6dl-ccimx6sbc.dts
+@@ -105,17 +105,17 @@
+ 	 * to avoid this error message.
+ 	 */
+ 	/* Uncomment to enable the fusion touch, used with hsd101pfw2 */
+-	//fusion@10 {
+-	//	status = "okay";
+-	//};
++	fusion@10 {
++		status = "okay";
++	};
+ 
+ 	//fusion@14 {
+ 	//	status = "okay";
+ 	//};
+ 
+-	goodix_touch: gt911@14 {
+-		status = "okay";
+-	};
++	//goodix_touch: gt911@14 {
++	// 	status = "okay";
++	//};
+ 
+ 	edid@50 {
+ 		status = "okay";
+diff --git a/arch/arm/boot/dts/imx6q-ccimx6sbc-id129.dts b/arch/arm/boot/dts/imx6q-ccimx6sbc-id129.dts
+index 2ac5ce9..aa0d8a4 100644
+--- a/arch/arm/boot/dts/imx6q-ccimx6sbc-id129.dts
++++ b/arch/arm/boot/dts/imx6q-ccimx6sbc-id129.dts
+@@ -120,17 +120,17 @@
+ 	 * to avoid this error message.
+ 	 */
+ 	/* Uncomment to enable the fusion touch, used with hsd101pfw2 */
+-	//fusion@10 {
+-	//	status = "okay";
+-	//};
++	fusion@10 {
++		status = "okay";
++	};
+ 
+ 	//fusion@14 {
+ 	//	status = "okay";
+ 	//};
+ 
+-	goodix_touch: gt911@14 {
+-		status = "okay";
+-	};
++	//goodix_touch: gt911@14 {
++	//	status = "okay";
++	//};
+ 
+ 	edid@50 {
+ 		status = "okay";
+diff --git a/arch/arm/boot/dts/imx6q-ccimx6sbc-id130.dts b/arch/arm/boot/dts/imx6q-ccimx6sbc-id130.dts
+index 72a75a08..578ae0b 100644
+--- a/arch/arm/boot/dts/imx6q-ccimx6sbc-id130.dts
++++ b/arch/arm/boot/dts/imx6q-ccimx6sbc-id130.dts
+@@ -104,17 +104,17 @@
+ 	 * to avoid this error message.
+ 	 */
+ 	/* Uncomment to enable the fusion touch, used with hsd101pfw2 */
+-	//fusion@10 {
+-	//	status = "okay";
+-	//};
++	fusion@10 {
++		status = "okay";
++	};
+ 
+ 	//fusion@14 {
+ 	//	status = "okay";
+ 	//};
+ 
+-	goodix_touch: gt911@14 {
+-		status = "okay";
+-	};
++	//goodix_touch: gt911@14 {
++	//	status = "okay";
++	//};
+ 
+ 	edid@50 {
+ 		status = "okay";
+diff --git a/arch/arm/boot/dts/imx6q-ccimx6sbc-w.dts b/arch/arm/boot/dts/imx6q-ccimx6sbc-w.dts
+index c8ce67c..ada45b0 100644
+--- a/arch/arm/boot/dts/imx6q-ccimx6sbc-w.dts
++++ b/arch/arm/boot/dts/imx6q-ccimx6sbc-w.dts
+@@ -120,17 +120,17 @@
+ 	 * to avoid this error message.
+ 	 */
+ 	/* Uncomment to enable the fusion touch, used with hsd101pfw2 */
+-	//fusion@10 {
+-	//	status = "okay";
+-	//};
++	fusion@10 {
++		status = "okay";
++	};
+ 
+ 	//fusion@14 {
+ 	//	status = "okay";
+ 	//};
+ 
+-	goodix_touch: gt911@14 {
+-		status = "okay";
+-	};
++	//goodix_touch: gt911@14 {
++	//	status = "okay";
++	//};
+ 
+ 	edid@50 {
+ 		status = "okay";
+diff --git a/arch/arm/boot/dts/imx6q-ccimx6sbc-wb-ldo-bypass.dts b/arch/arm/boot/dts/imx6q-ccimx6sbc-wb-ldo-bypass.dts
+index ce74885..ff72242 100644
+--- a/arch/arm/boot/dts/imx6q-ccimx6sbc-wb-ldo-bypass.dts
++++ b/arch/arm/boot/dts/imx6q-ccimx6sbc-wb-ldo-bypass.dts
+@@ -165,17 +165,17 @@
+ 	 * to avoid this error message.
+ 	 */
+ 	/* Uncomment to enable the fusion touch, used with hsd101pfw2 */
+-	//fusion@10 {
+-	//	status = "okay";
+-	//};
++	fusion@10 {
++		status = "okay";
++	};
+ 
+ 	//fusion@14 {
+ 	//	status = "okay";
+ 	//};
+ 
+-	goodix_touch: gt911@14 {
+-		status = "okay";
+-	};
++	//goodix_touch: gt911@14 {
++	//	status = "okay";
++	//};
+ 
+ 	edid@50 {
+ 		status = "okay";
+diff --git a/arch/arm/boot/dts/imx6q-ccimx6sbc-wb.dts b/arch/arm/boot/dts/imx6q-ccimx6sbc-wb.dts
+index a9655de..a0489b3 100644
+--- a/arch/arm/boot/dts/imx6q-ccimx6sbc-wb.dts
++++ b/arch/arm/boot/dts/imx6q-ccimx6sbc-wb.dts
+@@ -120,17 +120,17 @@
+ 	 * to avoid this error message.
+ 	 */
+ 	/* Uncomment to enable the fusion touch, used with hsd101pfw2 */
+-	//fusion@10 {
+-	//	status = "okay";
+-	//};
++	fusion@10 {
++		status = "okay";
++	};
+ 
+ 	//fusion@14 {
+ 	//	status = "okay";
+ 	//};
+ 
+-	goodix_touch: gt911@14 {
+-		status = "okay";
+-	};
++	//goodix_touch: gt911@14 {
++	//	status = "okay";
++	//};
+ 
+ 	edid@50 {
+ 		status = "okay";
+diff --git a/arch/arm/boot/dts/imx6q-ccimx6sbc.dts b/arch/arm/boot/dts/imx6q-ccimx6sbc.dts
+index 4259d20..e398e8a 100644
+--- a/arch/arm/boot/dts/imx6q-ccimx6sbc.dts
++++ b/arch/arm/boot/dts/imx6q-ccimx6sbc.dts
+@@ -117,17 +117,17 @@
+ 	 * to avoid this error message.
+ 	 */
+ 	/* Uncomment to enable the fusion touch, used with hsd101pfw2 */
+-	//fusion@10 {
+-	//	status = "okay";
+-	//};
++	fusion@10 {
++		status = "okay";
++	};
+ 
+ 	//fusion@14 {
+ 	//	status = "okay";
+ 	//};
+ 
+-	goodix_touch: gt911@14 {
+-		status = "okay";
+-	};
++	//goodix_touch: gt911@14 {
++	//	status = "okay";
++	//};
+ 
+ 	edid@50 {
+ 		status = "okay";
+-- 
+2.7.4
+

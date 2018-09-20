@@ -1,0 +1,236 @@
+From 51ce4f51b9043dd08cccfac663b2a75dcd4b783b Mon Sep 17 00:00:00 2001
+From: Cameron Haegle <cameronh@digi.com>
+Date: Thu, 20 Sep 2018 10:40:48 -0500
+Subject: [PATCH 2/2] ARM dts ccimx6sbc Enable fusion touch on addr 14
+
+---
+ arch/arm/boot/dts/imx6dl-ccimx6sbc-w.dts            | 10 +++++-----
+ arch/arm/boot/dts/imx6dl-ccimx6sbc-wb.dts           | 10 +++++-----
+ arch/arm/boot/dts/imx6dl-ccimx6sbc.dts              | 10 +++++-----
+ arch/arm/boot/dts/imx6q-ccimx6sbc-id129.dts         | 10 +++++-----
+ arch/arm/boot/dts/imx6q-ccimx6sbc-id130.dts         | 10 +++++-----
+ arch/arm/boot/dts/imx6q-ccimx6sbc-w.dts             | 10 +++++-----
+ arch/arm/boot/dts/imx6q-ccimx6sbc-wb-ldo-bypass.dts | 10 +++++-----
+ arch/arm/boot/dts/imx6q-ccimx6sbc-wb.dts            | 10 +++++-----
+ arch/arm/boot/dts/imx6q-ccimx6sbc.dts               | 10 +++++-----
+ 9 files changed, 45 insertions(+), 45 deletions(-)
+
+diff --git a/arch/arm/boot/dts/imx6dl-ccimx6sbc-w.dts b/arch/arm/boot/dts/imx6dl-ccimx6sbc-w.dts
+index 1d47a9b..721adec 100644
+--- a/arch/arm/boot/dts/imx6dl-ccimx6sbc-w.dts
++++ b/arch/arm/boot/dts/imx6dl-ccimx6sbc-w.dts
+@@ -109,14 +109,14 @@
+ 	//	status = "okay";
+ 	//};
+ 
+-	//fusion@14 {
+-	//	status = "okay";
+-	//};
+-
+-	goodix_touch: gt911@14 {
++	fusion@14 {
+ 		status = "okay";
+ 	};
+ 
++	//goodix_touch: gt911@14 {
++	//	status = "okay";
++	//};
++
+ 	edid@50 {
+ 		status = "okay";
+ 	};
+diff --git a/arch/arm/boot/dts/imx6dl-ccimx6sbc-wb.dts b/arch/arm/boot/dts/imx6dl-ccimx6sbc-wb.dts
+index 7804a4f..5cab46a 100644
+--- a/arch/arm/boot/dts/imx6dl-ccimx6sbc-wb.dts
++++ b/arch/arm/boot/dts/imx6dl-ccimx6sbc-wb.dts
+@@ -109,14 +109,14 @@
+ 	//	status = "okay";
+ 	//};
+ 
+-	//fusion@14 {
+-	//	status = "okay";
+-	//};
+-
+-	goodix_touch: gt911@14 {
++	fusion@14 {
+ 		status = "okay";
+ 	};
+ 
++	//goodix_touch: gt911@14 {
++ 	//	status = "okay";
++	//};
++
+ 	edid@50 {
+ 		status = "okay";
+ 	};
+diff --git a/arch/arm/boot/dts/imx6dl-ccimx6sbc.dts b/arch/arm/boot/dts/imx6dl-ccimx6sbc.dts
+index 892dbb3..0c39414 100644
+--- a/arch/arm/boot/dts/imx6dl-ccimx6sbc.dts
++++ b/arch/arm/boot/dts/imx6dl-ccimx6sbc.dts
+@@ -109,14 +109,14 @@
+ 	//	status = "okay";
+ 	//};
+ 
+-	//fusion@14 {
+-	//	status = "okay";
+-	//};
+-
+-	goodix_touch: gt911@14 {
++	fusion@14 {
+ 		status = "okay";
+ 	};
+ 
++	//goodix_touch: gt911@14 {
++	//	status = "okay";
++	//};
++
+ 	edid@50 {
+ 		status = "okay";
+ 	};
+diff --git a/arch/arm/boot/dts/imx6q-ccimx6sbc-id129.dts b/arch/arm/boot/dts/imx6q-ccimx6sbc-id129.dts
+index 2ac5ce9..6b6230e 100644
+--- a/arch/arm/boot/dts/imx6q-ccimx6sbc-id129.dts
++++ b/arch/arm/boot/dts/imx6q-ccimx6sbc-id129.dts
+@@ -124,14 +124,14 @@
+ 	//	status = "okay";
+ 	//};
+ 
+-	//fusion@14 {
+-	//	status = "okay";
+-	//};
+-
+-	goodix_touch: gt911@14 {
++	fusion@14 {
+ 		status = "okay";
+ 	};
+ 
++	//goodix_touch: gt911@14 {
++	//	status = "okay";
++	//};
++
+ 	edid@50 {
+ 		status = "okay";
+ 	};
+diff --git a/arch/arm/boot/dts/imx6q-ccimx6sbc-id130.dts b/arch/arm/boot/dts/imx6q-ccimx6sbc-id130.dts
+index 72a75a08..ce46cf9 100644
+--- a/arch/arm/boot/dts/imx6q-ccimx6sbc-id130.dts
++++ b/arch/arm/boot/dts/imx6q-ccimx6sbc-id130.dts
+@@ -108,14 +108,14 @@
+ 	//	status = "okay";
+ 	//};
+ 
+-	//fusion@14 {
+-	//	status = "okay";
+-	//};
+-
+-	goodix_touch: gt911@14 {
++	fusion@14 {
+ 		status = "okay";
+ 	};
+ 
++	//goodix_touch: gt911@14 {
++	//	status = "okay";
++	//};
++
+ 	edid@50 {
+ 		status = "okay";
+ 	};
+diff --git a/arch/arm/boot/dts/imx6q-ccimx6sbc-w.dts b/arch/arm/boot/dts/imx6q-ccimx6sbc-w.dts
+index c8ce67c..a0f2579 100644
+--- a/arch/arm/boot/dts/imx6q-ccimx6sbc-w.dts
++++ b/arch/arm/boot/dts/imx6q-ccimx6sbc-w.dts
+@@ -124,14 +124,14 @@
+ 	//	status = "okay";
+ 	//};
+ 
+-	//fusion@14 {
+-	//	status = "okay";
+-	//};
+-
+-	goodix_touch: gt911@14 {
++	fusion@14 {
+ 		status = "okay";
+ 	};
+ 
++	//goodix_touch: gt911@14 {
++	//	status = "okay";
++	//};
++
+ 	edid@50 {
+ 		status = "okay";
+ 	};
+diff --git a/arch/arm/boot/dts/imx6q-ccimx6sbc-wb-ldo-bypass.dts b/arch/arm/boot/dts/imx6q-ccimx6sbc-wb-ldo-bypass.dts
+index ce74885..54ef93c 100644
+--- a/arch/arm/boot/dts/imx6q-ccimx6sbc-wb-ldo-bypass.dts
++++ b/arch/arm/boot/dts/imx6q-ccimx6sbc-wb-ldo-bypass.dts
+@@ -169,14 +169,14 @@
+ 	//	status = "okay";
+ 	//};
+ 
+-	//fusion@14 {
+-	//	status = "okay";
+-	//};
+-
+-	goodix_touch: gt911@14 {
++	fusion@14 {
+ 		status = "okay";
+ 	};
+ 
++	//goodix_touch: gt911@14 {
++	//	status = "okay";
++	//};
++
+ 	edid@50 {
+ 		status = "okay";
+ 	};
+diff --git a/arch/arm/boot/dts/imx6q-ccimx6sbc-wb.dts b/arch/arm/boot/dts/imx6q-ccimx6sbc-wb.dts
+index a9655de..3a46974 100644
+--- a/arch/arm/boot/dts/imx6q-ccimx6sbc-wb.dts
++++ b/arch/arm/boot/dts/imx6q-ccimx6sbc-wb.dts
+@@ -124,14 +124,14 @@
+ 	//	status = "okay";
+ 	//};
+ 
+-	//fusion@14 {
+-	//	status = "okay";
+-	//};
+-
+-	goodix_touch: gt911@14 {
++	fusion@14 {
+ 		status = "okay";
+ 	};
+ 
++	//goodix_touch: gt911@14 {
++	//	status = "okay";
++	//};
++
+ 	edid@50 {
+ 		status = "okay";
+ 	};
+diff --git a/arch/arm/boot/dts/imx6q-ccimx6sbc.dts b/arch/arm/boot/dts/imx6q-ccimx6sbc.dts
+index 4259d20..5c8234e 100644
+--- a/arch/arm/boot/dts/imx6q-ccimx6sbc.dts
++++ b/arch/arm/boot/dts/imx6q-ccimx6sbc.dts
+@@ -121,14 +121,14 @@
+ 	//	status = "okay";
+ 	//};
+ 
+-	//fusion@14 {
+-	//	status = "okay";
+-	//};
+-
+-	goodix_touch: gt911@14 {
++	fusion@14 {
+ 		status = "okay";
+ 	};
+ 
++	//goodix_touch: gt911@14 {
++	//	status = "okay";
++	//};
++
+ 	edid@50 {
+ 		status = "okay";
+ 	};
+-- 
+2.7.4
+

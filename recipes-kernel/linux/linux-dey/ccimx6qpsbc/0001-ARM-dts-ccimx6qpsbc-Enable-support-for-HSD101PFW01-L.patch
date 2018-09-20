@@ -1,0 +1,34 @@
+From 6c82eb0f749c0901052f6489490d40c7fbbd4782 Mon Sep 17 00:00:00 2001
+From: Cameron Haegle <cameronh@digi.com>
+Date: Wed, 19 Sep 2018 10:15:28 -0500
+Subject: [PATCH 1/2] ARM dts ccimx6qpsbc Enable support for HSD101PFW01 LCD
+
+---
+ arch/arm/boot/dts/imx6qp-ccimx6qpsbc.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/imx6qp-ccimx6qpsbc.dtsi b/arch/arm/boot/dts/imx6qp-ccimx6qpsbc.dtsi
+index b183f92..50506d4 100644
+--- a/arch/arm/boot/dts/imx6qp-ccimx6qpsbc.dtsi
++++ b/arch/arm/boot/dts/imx6qp-ccimx6qpsbc.dtsi
+@@ -235,7 +235,7 @@
+ 		primary;
+ 
+ 		display-timings {
+-			native-mode = <&g101evn010_1>;
++			native-mode = <&hsd101pfw2_1>;
+ 
+ 			/* Fusion 10" F10A-0102 */
+ 			hsd101pfw2_1: timing@0 {
+@@ -274,7 +274,7 @@
+ 		crtc = "ipu2-di1";
+ 
+ 		display-timings {
+-			native-mode = <&g101evn010_2>;
++			native-mode = <&hsd101pfw2_2>;
+ 
+ 			/* Fusion 10" F10A-0102 */
+ 			hsd101pfw2_2: timing@0 {
+-- 
+2.7.4
+
