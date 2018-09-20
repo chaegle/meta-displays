@@ -18,7 +18,7 @@ Supported Platforms
 -------------------
 
   * Digi ConnectCore 6UL SBC Pro 
-  * Digi connectCore 6 SBC (Quad and Dual)
+  * Digi ConnectCore 6 SBC (Quad and Dual)
   * Digi ConnectCore 6 Quad Plus SBC
 
 Installation
@@ -45,8 +45,9 @@ of these pads.
 Create and build a project
 --------------------------
 
-1. Create a project for ConnectCore 6UL SBC Pro.
+1. Create a project for your platform.
 
+   EXAMPLE:
         #> mkdir <project-dir>
         #> cd <project-dir>
         #> . <DEY-INSTALLDIR>/mkproject.sh -p ccimx6ulsbc
@@ -66,11 +67,13 @@ Create and build a project
      
         Add the following line(s) to your project's local.conf.
         
-        *Sharp LQ043 on ccimx6ulsbc*
+        SHARP LQ043 ON ccimx6ulsbc
+        --------------------------
 
         DISP_LQ043 = "1"
 
-        *Fusion 10" on ccimx6sbc and ccimx6qpsbc*
+        FUSION 10" ON the ccimx6sbc AND ccimx6qpsbc
+        -------------------------------------------
  
         # Enable Digi LCD Application kit support
         DISP_FUSION = "1"
